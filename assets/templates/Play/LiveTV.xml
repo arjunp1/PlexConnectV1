@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<atv>
+  <body>
+    <videoPlayer id="com.sample.video-player">
+      <httpLiveStreamingVideoAsset id="{{VAL(^PlexConnectRatingKey)}}"  indefiniteDuration="true">
+      {{COPY(MediaSubscription/MediaGrabOperation/Video)}}
+
+        <mediaURL>{{VIDEOURL()}}</mediaURL>
+        <title>{{VAL(title)}}</title>{{CUT(grandparentTitle::=CUT)}}
+        <title>{{VAL(grandparentTitle)}} - Season {{VAL(parentIndex)}} • Episode {{VAL(index)}} - {{VAL(title)}}</title>{{CUT(grandparentTitle:CUT:=)}}
+        <description>{{VAL(summary)}}</description>
+        <!--<bookmarkTime>{{EVAL({{VAL(viewOffset:0)}} / 1000)}}</bookmarkTime>-->
+        <image>{{IMAGEURL(thumb::384)}}</image>{{CUT(grandparentThumb::=CUT)}}
+        <image>{{IMAGEURL(grandparentThumb::384)}}</image>{{CUT(grandparentThumb:CUT:=)}}
+
+        <videoPlayerSettings>
+            <!-- PMS, OSD settings, ... -->
+            <baseURL>{{VAL(%baseURL)}}</baseURL>
+            <accessToken>{{VAL(%accesstoken)}}</accessToken>
+
+            <showClock>{{VAL($showplayerclock)}}</showClock>
+            <timeFormat>{{VAL($timeformat)}}</timeFormat>
+            <clockPosition>{{VAL($clockposition)}}</clockPosition>
+            <overscanAdjust>{{VAL($overscanadjust)}}</overscanAdjust>
+            <showEndtime>{{VAL($showendtime)}}</showEndtime>
+
+            <subtitleSize>{{VAL($subtitlesize)}}</subtitleSize>
+        </videoPlayerSettings>
+
+        <myMetadata>
+            <key>{{VAL(key)}}</key>
+            <ratingKey>{{VAL(ratingKey)}}</ratingKey>
+            <duration>{{VAL(duration)}}</duration>
+            <partDuration>{{VAL(@main/MediaGrabOperation/Video/Media/Part/duration)}}</partDuration>
+
+            <!-- subtitle -->
+            <__COPY__><!--needed as {{COPY}} doesn't work completely clean. Todo: ExpandTree needs to "finish" current element...-->
+            {{COPY(Media/Part/Stream:streamType::=|3=COPY|3 =)}}
+              <subtitleURL> <!-- id="{{VAL(id)}}" key="{{VAL(key)}}" codec="{{VAL(codec)}}"--><!--.srt only -->
+
+                {{URL(key:::PlexConnect=Subtitle&amp;PlexConnectSubtitleFormat={{VAL(codec)}})}}
+              </subtitleURL>
+            </__COPY__>
+        </myMetadata>
+
+      </httpLiveStreamingVideoAsset>
+    </videoPlayer>
+  </body>
+</atv>
